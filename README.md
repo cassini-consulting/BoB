@@ -8,7 +8,8 @@ Genutze Programmiersprache: C++ (Arduiono), JavaScript (Rasperry Pi), Solidiy (E
 UseCase
 ![alt text](https://raw.githubusercontent.com/cassini-consulting/BoB/master/BoB_usecases.bmp)
 Process
-
+![alt text](https://github.com/cassini-consulting/BoB/blob/master/Vertr%C3%A4ge%20abwickeln.bmp?raw=true)
 Architecture
-
+![alt text](https://github.com/cassini-consulting/BoB/blob/master/BoB%20Architektur.bmp)
 Sqeuence Diagramm
+![alt text](https://github.com/cassini-consulting/BoB/blob/master/Sequenz%20diagramm%20BoB.bmp?raw=true)
