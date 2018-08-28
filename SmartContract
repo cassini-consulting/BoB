@@ -1,0 +1,130 @@
+pragma solidity ^0.4.16;
+contract BoB {
+// declatraiotn of global variable
+address public admin; //Admin darf alles
+uint public reinigungskosten; // definiert die kosten für eine Reinigung
+uint public ID_wohnung_counter; // initieren der counter
+uint public ID_staubsauger_counter; // initieren der counter
+uint public ID_Angebot_counter; // initieren der counter
+//Definition Objekt Staubsauger
+struct staubsauger {
+uint ID_staubsauger;
+bool is_active;
+string name;
+string firmware_hash; //zertifizeirte Software auf dem Staubsauger.
+}
+//Definito Objekt Wohnung
+struct wohnung {
+uint ID_wohnung;
+bool is_active;
+string name;
+}
+// public liste von registrierten wohnungen und staubsaugern
+mapping (address => staubsauger) public registrierte_staubsauger;
+mapping (address => wohnung) public registrierte_wohnung;
+// interne liste Geld storage
+mapping (address => uint) internal offene_zahlung;
+// Declaration of message events
+event Wohnung_angelegt(address wohnung_addresse,uint ID_wohnung, string name);
+event Staubsauger_angelegt(address staubsauger_addresse, uint ID_staubsauger, string name);
+event Mich_Sauber_machen(address wohnung_addresse, bool ether_vorhanden);
+event Falsche_Ueberweisung(address wohnung_addresse);
+event Wohnung_nicht_genug_Ether(address staubsauger_addresse, address wohnung_addresse);
+event Ich_mache_sauber(address staubsauger_adresse, address wohnung_addresse);
+event Ich_entsperre_tuer(address wohnung_addresse);
+event Ich_habe_geputzt(address staubsauger_addresse, address wohnung_addresse);
+event Leistung_nicht_bezahlt(address staubsauger_addresse, address wohnung_addresse);
+event Ich_sperre_tuer(address wohnung_addresse);
+/// init function für smart contract
+function BoB() {
+admin = msg.sender;// der den contract deployed ist der admin
+ID_wohnung_counter = 1; // initieren der counter
+ID_staubsauger_counter = 1; // initieren der counter
+ID_Angebot_counter = 1; // initieren der counter
+reinigungskosten = 1 ether;
+}
+//admin fuktionen --> kann nur durch die address des admins pa
+// funktion zum allegen von Wohnungen
+function wohnung_angelegen(string _name, address wohnung_address) public {
+require(msg.sender == admin); // geht nur als admin
+//erstelle die Wohnung
+// Creates a new temporary memory struct, initialised with the given values
+// and copies it over to storage.
+// note: struct wohung: wohnung=  uint ID_wohnung; bool is_active; string name;
+registrierte_wohnung[wohnung_address] = wohnung({ID_wohnung: ID_wohnung_counter, is_active: true, name: _name });
+//zähle den counter hoch
+ID_wohnung_counter = ID_wohnung_counter +1 ;
+// Event erzeugen
+Wohnung_angelegt(wohnung_address, registrierte_wohnung[wohnung_address].ID_wohnung,registrierte_wohnung[wohnung_address].name );
+}
+// funktion zum Anlegen von Staubsaugern
+function staubsauger_angelegen(string _name, address staubsauger_address, string fw_hash) public {
+require(msg.sender == admin); // geht nur als admin
+// Creates a new temporary memory struct, initialised with the given values
+// and copies it over to storage.
+registrierte_staubsauger[staubsauger_address] = staubsauger({ID_staubsauger: ID_staubsauger_counter,
+is_active: true, name: _name,
+firmware_hash: fw_hash});
+//zähle den counter hoch
+ID_staubsauger_counter = ID_staubsauger_counter +1 ;
+// Event erzeugen
+Staubsauger_angelegt(staubsauger_address, registrierte_staubsauger[staubsauger_address].ID_staubsauger,
+registrierte_staubsauger[staubsauger_address].name);
+}
+// public funktionen for staubsauger und wohnungen
+// Funktion der Wohnung um Reiningung zu beauftragen
+function mach_mich_sauber() payable public {
+require(registrierte_wohnung[msg.sender].is_active == true); //nur registrierte wohnung darf
+offene_zahlung[msg.sender] = msg.value; // die Wohnung muss für die Reining geld sende
+bool ether_vorhanden;
+if (offene_zahlung[msg.sender] == reinigungskosten){
+//erzeuge event auf das der staubsauger wartet
+ether_vorhanden=true;
+Mich_Sauber_machen(msg.sender, ether_vorhanden);
+}
+else {
+msg.sender.transfer(offene_zahlung[msg.sender]);
+offene_zahlung[msg.sender]=0;
+ether_vorhanden = false;
+Falsche_Ueberweisung(msg.sender);
+}
+}
+//Wird von Staubsauger aufgerufen, wenn Event Mich_Sauber_machen wahrgenommen wurde
+//Passiert außerhalb der Blockchain
+function ich_mache_sauber(address wohnung_adresse) public{
+require(registrierte_staubsauger[msg.sender].is_active == true); //nur registrierte staubsauger darf
+if(offene_zahlung[wohnung_adresse] == reinigungskosten){
+Ich_mache_sauber(msg.sender, wohnung_adresse);
+}
+else{
+Wohnung_nicht_genug_Ether(msg.sender, wohnung_adresse);
+}
+}
+//Funktion um zu sagen, dass tür entsperrt wird
+function ich_entsperre_tuer() public{
+require(registrierte_wohnung[msg.sender].is_active == true); //nur registrierte wohnung
+Ich_entsperre_tuer(msg.sender);
+}
+//Funktion um zu sagen, dass der Staubsauger fertig geputzt hat und die wohnung verlassen hat
+function ich_habe_geputzt(address wohnung_adresse) public{
+require(registrierte_staubsauger[msg.sender].is_active == true); //nur registrierte staubsauger
+if(offene_zahlung[wohnung_adresse]==reinigungskosten){
+uint amount = offene_zahlung[wohnung_adresse];
+offene_zahlung[wohnung_adresse] = 0;
+msg.sender.transfer(amount);
+Ich_habe_geputzt(msg.sender, wohnung_adresse);
+}else{
+Leistung_nicht_bezahlt(msg.sender, wohnung_adresse);
+}
+}
+//Funktion um zu sagen, dass die tür wieder gesperrt wurde
+function ich_sperre_tuer() public{
+require(registrierte_wohnung[msg.sender].is_active == true); //nur registrierte wohnung
+Ich_sperre_tuer(msg.sender);
+}
+//instert Kill funtion
+function kill() {
+require(admin == msg.sender);
+if (msg.sender == admin) selfdestruct(admin);
+}
+}
