@@ -1,37 +1,45 @@
-//START PARITY NODE WITH:
+//START PARITY NODE WITH: 
 //parity --chain ropsten --warp --rpcapi "eth,net,web3,personal,parity"
+
 // Interaction with Ethereum
 var Web3 = require('web3')
 var web3 = new Web3()
+
 // connect to the local node
 web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'))
+
 // The contract that we are going to interact with
 var contractAddress = '0xa6055760a13A50625F074a7985B43De64c1259BD'
+
 //Define ethAccount
 var ethAccount = '0x00C4AA3b5b202C710fe525bE1fCF59Ffd5AF6fF9'
+
 // Define the ABI (Application Binary Interface)
 var ABI = JSON.parse('[ { "constant": false, "inputs": [ { "name": "_name", "type": "string" }, { "name": "staubsauger_address", "type": "address" }, { "name": "fw_hash", "type": "string" } ], "name": "staubsauger_angelegen", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "ich_sperre_tuer", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "registrierte_wohnung", "outputs": [ { "name": "ID_wohnung", "type": "uint256" }, { "name": "is_active", "type": "bool" }, { "name": "name", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "ID_wohnung_counter", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "ID_staubsauger_counter", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "wohnung_adresse", "type": "address" } ], "name": "ich_mache_sauber", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "kill", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "reinigungskosten", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "_name", "type": "string" }, { "name": "wohnung_address", "type": "address" } ], "name": "wohnung_angelegen", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "ich_entsperre_tuer", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "ID_Angebot_counter", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "wohnung_adresse", "type": "address" } ], "name": "ich_habe_geputzt", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "mach_mich_sauber", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "registrierte_staubsauger", "outputs": [ { "name": "ID_staubsauger", "type": "uint256" }, { "name": "is_active", "type": "bool" }, { "name": "name", "type": "string" }, { "name": "firmware_hash", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "admin", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "wohnung_addresse", "type": "address" }, { "indexed": false, "name": "ID_wohnung", "type": "uint256" }, { "indexed": false, "name": "name", "type": "string" } ], "name": "Wohnung_angelegt", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "staubsauger_addresse", "type": "address" }, { "indexed": false, "name": "ID_staubsauger", "type": "uint256" }, { "indexed": false, "name": "name", "type": "string" } ], "name": "Staubsauger_angelegt", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "wohnung_addresse", "type": "address" }, { "indexed": false, "name": "ether_vorhanden", "type": "bool" } ], "name": "Mich_Sauber_machen", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "wohnung_addresse", "type": "address" } ], "name": "Falsche_Ueberweisung", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "staubsauger_addresse", "type": "address" }, { "indexed": false, "name": "wohnung_addresse", "type": "address" } ], "name": "Wohnung_nicht_genug_Ether", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "staubsauger_adresse", "type": "address" }, { "indexed": false, "name": "wohnung_addresse", "type": "address" } ], "name": "Ich_mache_sauber", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "wohnung_addresse", "type": "address" } ], "name": "Ich_entsperre_tuer", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "staubsauger_addresse", "type": "address" }, { "indexed": false, "name": "wohnung_addresse", "type": "address" } ], "name": "Ich_habe_geputzt", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "staubsauger_addresse", "type": "address" }, { "indexed": false, "name": "wohnung_addresse", "type": "address" } ], "name": "Leistung_nicht_bezahlt", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "name": "wohnung_addresse", "type": "address" } ], "name": "Ich_sperre_tuer", "type": "event" } ]')
+
 // contract object
 var contract = web3.eth.contract(ABI).at(contractAddress);
+
 //set default account (for web3 sendtransaction method)
-if (!web3.eth.defaultAccount) {
+if (!web3.eth.defaultAccount) { 
  web3.eth.defaultAccount = ethAccount;
  }
+
 //Listener für das Event Wohnung_nicht_genug_Ether
 var e_Mich_Sauber_machen = contract.Mich_Sauber_machen();
 e_Mich_Sauber_machen.watch(function(error, result) {
  if (!error) {
  //TODO Wohnungsadresse aus result auslesen und dynamisch einfügen
  console.log("Wohnung möchte sauber gemacht werden und ich bin frei!");
-
-//Einloggen mit Account und Passwort (notwendig eigener Account in der eigenen Node)
- web3.personal.unlockAccount(ethAccount, '<YOUR PASSWORT>');
+ //Einloggen mit Account und Passwort (notwendig eigener Account in der eigenen Node)
+ web3.personal.unlockAccount(ethAccount, 'BoB13371337');
  contract.ich_mache_sauber.sendTransaction('0x00B66A502947325f586A010867D49446093d4e5A', {gas: 100000});
  console.log("Auftragsbestätigung gesendet.");
  }else{
  console.log('Es gab einen Fehler bei dem Event --> Mich_Sauber_machen: ' + error);
  }
 })
+
 //Listener für das Event Ich_mache_sauber
 var e_Ich_entsperre_tuer = contract.Ich_entsperre_tuer();
 e_Ich_entsperre_tuer.watch(function(error, result) {
@@ -39,14 +47,14 @@ e_Ich_entsperre_tuer.watch(function(error, result) {
   //TODO Wohnungsadresse aus result auslesen und dynamisch einfügen
   console.log("Tür ist offen und ich beginne mit dem reinigen!");
   setTimeout(function() {
-  console.log("*Saug* *Saug*");
+  console.log("*Saug* *Saug*"); 
   setTimeout(function() {
   console.log("Ich habe fertig gereinigt");
   //Einloggen mit Account und Passwort (notwendig eigener Account in der eigenen Node)
   web3.personal.unlockAccount(ethAccount, 'BoB13371337');
   contract.ich_habe_geputzt.sendTransaction('0x00B66A502947325f586A010867D49446093d4e5A', {gas: 100000});
   }, 2000);
-  }, 3000); 
+  }, 3000);  
  }else{
  console.log('Es gab einen Fehler bei dem Event --> Ich_entsperre_tuer: ' + error);
  }
