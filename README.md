@@ -5,3 +5,10 @@ Ziel des Projektes war es zu zeigen, wie Internet of Things (IoT) Devices zusamm
 Genutzte Hardware: Arduion, Raspberry Pi, 
 Genutze Programmiersprache: C++ (Arduiono), JavaScript (Rasperry Pi), Solidiy (Ethereum Smart Contract)
 
+UseCase
+![alt text](https://raw.githubusercontent.com/cassini-consulting/BoB/master/BoB_usecases.bmp)
+Process
+
+Architecture
+
+Sqeuence Diagramm
