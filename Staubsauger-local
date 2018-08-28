@@ -32,7 +32,7 @@ e_Mich_Sauber_machen.watch(function(error, result) {
  //TODO Wohnungsadresse aus result auslesen und dynamisch einfügen
  console.log("Wohnung möchte sauber gemacht werden und ich bin frei!");
  //Einloggen mit Account und Passwort (notwendig eigener Account in der eigenen Node)
- web3.personal.unlockAccount(ethAccount, 'BoB13371337');
+ web3.personal.unlockAccount(ethAccount, '<YOUR PASSWORT>');
  contract.ich_mache_sauber.sendTransaction('0x00B66A502947325f586A010867D49446093d4e5A', {gas: 100000});
  console.log("Auftragsbestätigung gesendet.");
  }else{
@@ -51,7 +51,7 @@ e_Ich_entsperre_tuer.watch(function(error, result) {
   setTimeout(function() {
   console.log("Ich habe fertig gereinigt");
   //Einloggen mit Account und Passwort (notwendig eigener Account in der eigenen Node)
-  web3.personal.unlockAccount(ethAccount, 'BoB13371337');
+  web3.personal.unlockAccount(ethAccount, '<YOUR PASSWORT>');
   contract.ich_habe_geputzt.sendTransaction('0x00B66A502947325f586A010867D49446093d4e5A', {gas: 100000});
   }, 2000);
   }, 3000);  
